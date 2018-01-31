@@ -11,12 +11,8 @@ def printPattern(pattern):
                 line = line + " "
             elif round(pattern[y][x]) == 1:
                 line = line + "#"
-            elif pattern[y][x] >= 1:
+            else:
                 line = line + "!"
-            elif pattern[y][x] == -2:
-                line = line + "x"
-            elif pattern[y][x] == -3:
-                line = line + "o"
         print(line)
 
 def createTrainingSamples(pattern, numberOfSamples):
@@ -24,8 +20,10 @@ def createTrainingSamples(pattern, numberOfSamples):
     outputClass = np.empty([numberOfSamples,1])
     s = 0
     while s < numberOfSamples:
+        #Randomly choose a coordinate
         x = np.random.randint(16)
         y = np.random.randint(16)
+        #Prevent duplicate samples
         if [x,y] in trainingSamples.tolist():
             continue
         trainingSamples[s] = [x,y]
@@ -35,6 +33,7 @@ def createTrainingSamples(pattern, numberOfSamples):
 
     
 
+#Create Input and output data
 spiral = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
@@ -53,7 +52,11 @@ spiral = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 printPattern(spiral)
 (inputSamp, outputSamp) = createTrainingSamples(spiral, 32)
+
+#Create network
 spiralNetwork = FCNetwork(inputSamp, outputSamp, 3)
+
+#Record predicted output and error
 result = np.empty([16,16])
 error = 0
 for y in range(0,16):
@@ -63,6 +66,7 @@ for y in range(0,16):
 printPattern(result)
 print("error = {}".format(error/(16**2)))
 
+#Display results and matplotlib
 oneSamps = np.array([inputSamp[i] for i in np.where(outputSamp==1)[0]])
 zeroSamps = np.array([inputSamp[i] for i in np.where(outputSamp==0)[0]])
 
